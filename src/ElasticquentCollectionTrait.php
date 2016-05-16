@@ -40,6 +40,8 @@ trait ElasticquentCollectionTrait
             }
 
             $this->getElasticSearchClient()->bulk($params);
+
+            gc_collect_cycles();
         }
 
         return;
