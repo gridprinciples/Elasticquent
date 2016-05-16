@@ -23,21 +23,26 @@ trait ElasticquentCollectionTrait
             return null;
         }
 
-        $params = array();
 
-        foreach ($this->all() as $item) {
-            $params['body'][] = array(
-                'index' => array(
-                    '_id' => $item->getKey(),
-                    '_type' => $item->getTypeName(),
-                    '_index' => $item->getIndexName(),
-                ),
-            );
+        foreach ($this->chunk(1000) as $chunk) {
+            $params = array();
+            
+            foreach($chunk as $item) {
+                $params['body'][] = array(
+                    'index' => array(
+                        '_id' => $item->getKey(),
+                        '_type' => $item->getTypeName(),
+                        '_index' => $item->getIndexName(),
+                    ),
+                );
 
-            $params['body'][] = $item->getIndexDocumentData();
+                $params['body'][] = $item->getIndexDocumentData();
+            }
+
+            $this->getElasticSearchClient()->bulk($params);
         }
 
-        return $this->getElasticSearchClient()->bulk($params);
+        return;
     }
 
     /**
