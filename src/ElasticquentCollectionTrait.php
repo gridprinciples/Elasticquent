@@ -26,6 +26,8 @@ trait ElasticquentCollectionTrait
 
         foreach ($this->chunk(1000) as $chunk) {
             $params = array();
+
+            gc_enable();
             
             foreach($chunk as $item) {
                 $params['body'][] = array(
